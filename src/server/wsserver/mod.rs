@@ -1,19 +1,22 @@
-extern crate rosc;
 extern crate ws;
 
 use ws::{Handler, Sender, Result, Message, CloseCode};
+
+pub mod oscsender;
+
 pub struct Server{
-	pub out: Sender
+	pub wssender: Sender,
+    pub sender: oscsender::Sender
 }
 
 impl Handler for Server{
 
-   fn on_message(&mut self, msg: Message) -> Result<()> {
+    fn on_message(&mut self, msg: Message) -> Result<()> {
 
    		println!("message received");
-
+        self.sender.send();
         // Echo the message back
-        self.out.send(msg)
+        self.wssender.send(msg)
     }
 
     fn on_close(&mut self, code: CloseCode, reason: &str) {
